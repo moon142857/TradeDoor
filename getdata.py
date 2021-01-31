@@ -4,16 +4,30 @@ import matplotlib.pyplot as plt
 import random
 import math
 
-openfile = '300696.SZ_20200101_20210131_data.npz'
+starttime = '20200101'
+endtime = '20210131'
+code = '603256'
+#code = '300696'
 
+
+realcode = ''
+alllist = np.load('stock_basic_list.npy', allow_pickle=True)
+for i in range(alllist.shape[0]):
+    if alllist[i,:][1] == code:
+        realcode = alllist[i, :][0]
+        print(alllist[i, :])
+        break
+print("find ", realcode)
 
 ts.set_token('cefe71af0b7f229153b085142bf33e0cca0d5427f291fc488eff9252')
 #pro = ts.pro_api()
-#df = ts.pro_bar(ts_code='300696.SZ', adj='qfq', start_date='20200101', end_date='20210131')
-#df = ts.pro_bar(ts_code='300696.SZ', adj='qfq', start_date='20200101', end_date='20210131')
-
+data_1day = ts.pro_bar(ts_code=realcode, adj='qfq', start_date=starttime, end_date=endtime)
+print(data_1day.shape)
 # 15分钟线
-#df = ts.pro_bar(ts_code='300696.SZ', adj='qfq', start_date='20200101', end_date='20210131',freq='15min')
+data_15min = ts.pro_bar(ts_code=realcode, adj='qfq', start_date=starttime, end_date=endtime, freq='15min')
+print(data_15min.shape)
+np.savez(realcode+'_'+starttime + '_'+endtime+ '_data', data_1day, data_15min)
+exit()
 
 #df = pro.trade_cal(exchange='', start_date='20180901', end_date='20181001', fields='exchange,cal_date,is_open,pretrade_date', is_open='0')
 #print(df)
@@ -32,23 +46,20 @@ ts.set_token('cefe71af0b7f229153b085142bf33e0cca0d5427f291fc488eff9252')
 
 #df = np.load('./603256.SZ_20200101_20210131.npy', allow_pickle=True)
 #df = np.load('./300696.SZ_20200101_20210131.npy', allow_pickle=True)
-df = np.load(openfile, allow_pickle=True)
-data_1day = df['arr_0'][::-1]
-data_15min = df['arr_1'][::-1]
-print(data_1day.shape)
-print(data_15min.shape)
+df = np.load('./000001.SZ_20200101_20210131.npy', allow_pickle=True)
+df = df[::-1]
+print(df)
 #d = df.values[:,2]
 #y = d[::-1]
 
 
-#pro = ts.pro_api()
+pro = ts.pro_api()
 
-#data = pro.trade_cal(exchange='SSE', is_open='1', start_date='20200101', end_date='20210130', fields='cal_date')
-#x = data.values[:,0]
+data = pro.trade_cal(exchange='SSE', is_open='1', start_date='20200101', end_date='20210130', fields='cal_date')
+x = data.values[:,0]
 #print(x)
 
-init_amount = 500000
-balance = init_amount #现金余额
+balance = 500000 #现金余额
 value = 0 #市值（现金余额+收盘价格*持仓手数*100）
 position = 0 #持仓手数
 tradable = 0 #可卖手数
@@ -59,19 +70,17 @@ prehigh = 0
 preclose = 0
 prelow = 0
 
-buy = 0
-[rows, cols] = data_1day.shape
+[rows, cols] = df.shape
 for i in range(rows):
-    open = data_1day[i,:][2]
-    high = data_1day[i,:][3]
-    close = data_1day[i,:][5]
-    low = data_1day[i,:][4]
-    if i<20:
+    open = df[i,:][2]
+    high = df[i,:][3]
+    close = df[i,:][5]
+    low = df[i,:][4]
+    if i>10:
         preopen = open
         prehigh = high
         preclose = close
         prelow = low
-        buy = close
         continue
     tradable = position
 
@@ -82,10 +91,10 @@ for i in range(rows):
             tradable = 0
             cost = 0
             value = balance + close * position * 100
-            print("  sell", data_1day[i,:][1], value, cost, position, open,close, high,close)
+            print("  sell", x[i], value, cost, position, open,close, high,close)
 #            exit()
         else:
-            print("      rise", data_1day[i,:][1], value, cost, position, open,close, high,close)
+            print("      rise", x[i], value, cost, position, open,close, high,close)
     else:
         if high > prehigh:
             cost = max(prehigh+0.05,open)
@@ -94,12 +103,12 @@ for i in range(rows):
             value = balance + close * position * 100
 #            print(position)
 #            print(balance)
-            print("buy:", data_1day[i,:][1], value, cost, position, open,close, high,close)
+            print("buy:", x[i], value, cost, position, open,close, high,close)
             tradable = 0
             continue
         else:
             
-            print("         drop", data_1day[i,:][1], value, cost, position)
+            print("         drop", x[i], value, cost, position)
 
 
         
@@ -110,7 +119,8 @@ for i in range(rows):
     prelow = low
 
 
-print("Full position: ",(preclose - buy)*init_amount)
+
+
 
 
 '''
