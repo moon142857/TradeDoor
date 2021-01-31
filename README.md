@@ -15,8 +15,16 @@ https://zhuanlan.zhihu.com/p/348073931
 
 导入tushare
 
-import tushare as ts
+`import tushare as ts`
 
-## demo: python3 ts.py
+根据股票代码，获取1day和15min数据，服务器不能频繁拉取数据，所以要存下来
+
+`python3 getdata.py`
+
+根据数据分析交易数据，正在根据交易模式更新中...
+
+`python3 ts.py`
+
+
 
 
