@@ -1,6 +1,8 @@
 # TradeDoor
 
-https://zhuanlan.zhihu.com/p/348073931
+交易模型策略请移步知乎链接
+
+`https://zhuanlan.zhihu.com/p/348073931`
 
 根据交易模型
 
