@@ -23,9 +23,14 @@
 
 `python3 getdata.py`
 
+直方圖
+
+`python3 hist.py`
+
 根据数据分析交易数据，正在根据交易模式更新中...
 
 `python3 ts.py`
+
 
 
 
