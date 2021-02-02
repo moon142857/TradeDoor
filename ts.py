@@ -4,10 +4,11 @@ import matplotlib.pyplot as plt
 import random
 import math
 #openfile = '600519.SH_20200101_20210131_data.npz'
-openfile = '000735.SZ_20200101_20210131_data.npz'
 #openfile = '000735.SZ_20200101_20210131_data.npz'
 #openfile = '601360.SH_20200101_20210131_data.npz'
-#openfile = '603256.SH_20200101_20210131_data.npz'
+openfile = '603256.SH_20200101_20210131_data.npz'
+#openfile = '688019.SH_20200101_20210131_data.npz'
+#openfile = '601857.SH_20200101_20210131_data.npz'
 
 #ts.set_token('cefe71af0b7f229153b085142bf33e0cca0d5427f291fc488eff9252')
 #pro = ts.pro_api()
@@ -97,14 +98,15 @@ for i in range(rows15):
             continue
 
         if position > 0:
-#if close15 < cost - (prelow * 0.001):
-            if close15 < prelow - (prelow * 0.001):
+            if close15 < cost - (cost * 0.005) or  close15 < prelow - (prelow * 0.005):
+            #if close15 < prelow - (prelow * 0.001):
                 balance = balance + position * (close15) * 100
+                value = balance# + close15 * position * 100
+                print("   卖出时间：", data_1day[day][1], "市值：", value, "买入价格：", cost, 
+                            "成交手数：",position,  "昨天开盘：", preopen, "昨天收盘：",preclose, prehigh,preclose)
+                cost = 0
                 position = 0
                 tradable = 0
-                cost = 0
-                value = balance + close15 * position * 100
-                print("  sell", data_1day[day][1], value, cost, position, preopen,preclose, prehigh,preclose)
     #            exit()
             #else:
                 #print("      rise", data_1day[day][1], value, cost, position, open,close, high,close)
@@ -117,21 +119,23 @@ for i in range(rows15):
                     if (close15 - prehigh) / prehigh > 0.03:
                         restDay = 1
                     else:
-                        cost = close15+min(close15*0.001, 0.01)
+                        cost = prehigh+min(prehigh*0.005, 0.01)
                         #position = math.floor(balance / (cost) / 100 * random.randint(0,100000)/100000)
                         position = math.floor(balance / (cost) / 100)
                         balance = balance - position * (cost) * 100
                         value = balance + close * position * 100
-                        print("buy:", data_1day[day][1], value, cost, position, preopen,preclose, prehigh,preclose)
+                        print("买入时间:", data_1day[day][1], "市值：", value, "买入价格：", cost, 
+                            "成交手数：",position,  "昨天开盘：", preopen, "昨天收盘：",preclose, prehigh,preclose)
                         tradable = 0
                         restDay = 1
             elif close15 > prehigh:
-                cost = close15+min(close15*0.001, 0.01)
+                cost = prehigh+min(prehigh*0.005, 0.01)
                 #position = math.floor(balance / (cost) / 100 * random.randint(0,100000)/100000)
                 position = math.floor(balance / (cost) / 100)
                 balance = balance - position * (cost) * 100
                 value = balance + close * position * 100
-                print("buy:", data_1day[day][1], value, cost, position, preopen,preclose, prehigh,preclose)
+                print("买入时间:", data_1day[day][1], "市值：", value, "买入价格：", cost, 
+                            "成交手数：",position,  "昨天开盘：", preopen, "昨天收盘：",preclose, prehigh,preclose)
                 tradable = 0
                 restDay = 1
 
@@ -141,21 +145,12 @@ for i in range(rows15):
             preclose = close
             prelow = low
             predate = data_1day[day][1]
-print("股票代号： ", openfile[:9])
-print("购买日期:  ", buyDate)
-print("购买价格:  ", buyPrice)
-print("购买手数:  ", buyPosition)
-print("截止日期:  ", predate)
-print("当前价格:  ", preclose)
-print("无脑满仓市值:       ", (buyBalance + buyPosition* preclose* 100 - init_amount)/init_amount*100, "%")
-print("短线算法市值:       ", (balance + position* preclose*100 -init_amount)/init_amount*100,"%")
-
-'''
-plt.title("603256") 
-plt.xlabel("date") 
-plt.ylabel("price") 
-plt.plot(x,y) 
-plt.show()
-'''
-
+print("标的             ： ", openfile[:9])
+print("无脑+算法购买日期 :  ", buyDate)
+print("无脑满仓购买价格  :  ", buyPrice)
+print("无脑满仓购买手数  :  ", buyPosition)
+print("无脑+算法截止日期 :  ", predate)
+print("截止日期的收盘价格:   ", preclose)
+print("无脑满仓市值     :   ", (buyBalance + buyPosition* preclose* 100 - init_amount)/init_amount*100, "%")
+print("短线算法市值     :   ", (balance + position* preclose*100 -init_amount)/init_amount*100,"%")
 

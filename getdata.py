@@ -6,7 +6,9 @@ import math
 
 starttime = '20200101'
 endtime = '20210131'
-code = '600519'
+code = '601857'
+#code = '688019'
+#code = '600519'
 #code = '000735'
 #code = '300696'
 
@@ -20,7 +22,7 @@ for i in range(alllist.shape[0]):
         break
 print("find ", realcode)
 
-ts.set_token('c8669572f06badef088440c48a9a1449411b2836fb3a9fa02e9acba1')
+ts.set_token('')
 #pro = ts.pro_api()
 data_1day = ts.pro_bar(ts_code=realcode, adj='qfq', start_date=starttime, end_date=endtime)
 print(data_1day.shape)
