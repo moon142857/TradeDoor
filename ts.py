@@ -3,9 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import math
-
-openfile = '300696.SZ_20200101_20210131_data.npz'
-
+#openfile = '600519.SH_20200101_20210131_data.npz'
+openfile = '000735.SZ_20200101_20210131_data.npz'
+#openfile = '000735.SZ_20200101_20210131_data.npz'
+#openfile = '601360.SH_20200101_20210131_data.npz'
+#openfile = '603256.SH_20200101_20210131_data.npz'
 
 #ts.set_token('cefe71af0b7f229153b085142bf33e0cca0d5427f291fc488eff9252')
 #pro = ts.pro_api()
@@ -44,8 +46,12 @@ preopen = 0
 prehigh = 0
 preclose = 0
 prelow = 0
+predata = ''
 
-buy = 0
+buyPosition = 0
+buyBalance = 0.0
+buyPrice = 0.0
+buyDate = ''
 restDay = 0 #=1今天休息
 
 for i in range(rows15):
@@ -67,7 +73,10 @@ for i in range(rows15):
             prehigh = high
             preclose = close
             prelow = low
-            buy = close
+            buyPosition = math.floor(init_amount / close / 100)
+            buyPrice = close
+            buyBalance = init_amount - buyPrice*buyPosition * 100
+            buyDate = data_1day[day][1]
             continue
         tradable = position
         
@@ -88,16 +97,17 @@ for i in range(rows15):
             continue
 
         if position > 0:
-            if close15 < prelow:
+#if close15 < cost - (prelow * 0.001):
+            if close15 < prelow - (prelow * 0.001):
                 balance = balance + position * (close15) * 100
                 position = 0
                 tradable = 0
                 cost = 0
-                value = balance + close * position * 100
-                print("  sell", data_1day[day][1], value, cost, position, open,close, high,close)
+                value = balance + close15 * position * 100
+                print("  sell", data_1day[day][1], value, cost, position, preopen,preclose, prehigh,preclose)
     #            exit()
-            else:
-                print("      rise", data_1day[day][1], value, cost, position, open,close, high,close)
+            #else:
+                #print("      rise", data_1day[day][1], value, cost, position, open,close, high,close)
         else:
             #if close15 > prehigh:
             if open15 > prehigh and close15 > prehigh and index >= 1:
@@ -107,19 +117,21 @@ for i in range(rows15):
                     if (close15 - prehigh) / prehigh > 0.03:
                         restDay = 1
                     else:
-                        cost = close15+0.01
-                        position = math.floor(balance / (cost) / 100 * random.randint(0,100000)/100000)
+                        cost = close15+min(close15*0.001, 0.01)
+                        #position = math.floor(balance / (cost) / 100 * random.randint(0,100000)/100000)
+                        position = math.floor(balance / (cost) / 100)
                         balance = balance - position * (cost) * 100
                         value = balance + close * position * 100
-                        print("buy:", data_1day[day][1], value, cost, position, open,close, high,close)
+                        print("buy:", data_1day[day][1], value, cost, position, preopen,preclose, prehigh,preclose)
                         tradable = 0
                         restDay = 1
             elif close15 > prehigh:
-                cost = close15+0.01
-                position = math.floor(balance / (cost) / 100 * random.randint(0,100000)/100000)
+                cost = close15+min(close15*0.001, 0.01)
+                #position = math.floor(balance / (cost) / 100 * random.randint(0,100000)/100000)
+                position = math.floor(balance / (cost) / 100)
                 balance = balance - position * (cost) * 100
                 value = balance + close * position * 100
-                print("buy:", data_1day[day][1], value, cost, position, open,close, high,close)
+                print("buy:", data_1day[day][1], value, cost, position, preopen,preclose, prehigh,preclose)
                 tradable = 0
                 restDay = 1
 
@@ -128,60 +140,15 @@ for i in range(rows15):
             prehigh = high
             preclose = close
             prelow = low
-
-
-# [rows, cols] = data_1day.shape
-# for i in range(rows):
-#     open = data_1day[i,:][2]
-#     high = data_1day[i,:][3]
-#     close = data_1day[i,:][5]
-#     low = data_1day[i,:][4]
-#     if i<20:
-#         preopen = open
-#         prehigh = high
-#         preclose = close
-#         prelow = low
-#         buy = close
-#         continue
-#     tradable = position
-
-#     if position > 0:
-#         if low < prelow:
-#             balance = balance + position * (low-0.01) * 100
-#             position = 0
-#             tradable = 0
-#             cost = 0
-#             value = balance + close * position * 100
-#             print("  sell", data_1day[i,:][1], value, cost, position, open,close, high,close)
-# #            exit()
-#         else:
-#             print("      rise", data_1day[i,:][1], value, cost, position, open,close, high,close)
-#     else:
-#         if high > prehigh:
-#             cost = max(prehigh+0.05,open)
-#             position = math.floor(balance / (cost) / 100 * random.randint(0,100000)/100000)
-#             balance = balance - position * (cost) * 100
-#             value = balance + close * position * 100
-# #            print(position)
-# #            print(balance)
-#             print("buy:", data_1day[i,:][1], value, cost, position, open,close, high,close)
-#             tradable = 0
-#             continue
-#         else:
-            
-#             print("         drop", data_1day[i,:][1], value, cost, position)
-
-
-        
-
-#     preopen = open
-#     prehigh = high
-#     preclose = close
-#     prelow = low
-
-
-print("Full position: ",(preclose - buy)*init_amount)
-
+            predate = data_1day[day][1]
+print("股票代号： ", openfile[:9])
+print("购买日期:  ", buyDate)
+print("购买价格:  ", buyPrice)
+print("购买手数:  ", buyPosition)
+print("截止日期:  ", predate)
+print("当前价格:  ", preclose)
+print("无脑满仓市值:       ", (buyBalance + buyPosition* preclose* 100 - init_amount)/init_amount*100, "%")
+print("短线算法市值:       ", (balance + position* preclose*100 -init_amount)/init_amount*100,"%")
 
 '''
 plt.title("603256") 
