@@ -3,10 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import math
-#openfile = '600519.SH_20200101_20210131_data.npz'
+#openfile = '600007.SH_20200101_20210131_data.npz'
+openfile = '600519.SH_20200101_20210131_data.npz'
 #openfile = '000735.SZ_20200101_20210131_data.npz'
 #openfile = '601360.SH_20200101_20210131_data.npz'
-openfile = '603256.SH_20200101_20210131_data.npz'
+#openfile = '603256.SH_20200101_20210131_data.npz'
 #openfile = '688019.SH_20200101_20210131_data.npz'
 #openfile = '601857.SH_20200101_20210131_data.npz'
 
