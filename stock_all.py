@@ -18,10 +18,18 @@ import stock_one
 starttime = '20170102'
 endtime = '20210218'
 
+all = []
+
+a = ['SH.600206', datetime.date(2017, 1, 3), 10.0739, 496, datetime.date(2021, 2, 10), 11.33, 12.460511999999987, 236.9613760000003]
+b = ['SH.600206', datetime.date(2017, 1, 3), 10.0739, 496, datetime.date(2021, 2, 10), 11.33, 12.460511999999987, 236.9613760000003]
+all.append(a)
+all.append(b)
+
 
 
 x = []
 y = []
+
 
 
 
@@ -35,14 +43,12 @@ try:
     for i in range(stockbasic.shape[0]):
         isgo = 0
         #print(stockbasic[i,:][0], stockbasic[i,:][1])
-        if int(stockbasic[i,:][1]) >= 600000 and int(stockbasic[i,:][1]) < 600589:
+        if int(stockbasic[i,:][1]) >= 600000 and int(stockbasic[i,:][1]) < 600589: #600589:
             isgo = 1
-        
+        if int(stockbasic[i,:][1]) >= 1 and int(stockbasic[i,:][1]) < 898:
+            isgo = 1
         # if int(stockbasic[i,:][1]) == 600160:
         #     isgo = 1
-
-        if int(stockbasic[i,:][1]) >= 1 and int(stockbasic[i,:][1]) < 898:
-            isgo = 0
         if isgo == 0:
             continue
 
@@ -51,6 +57,7 @@ try:
         
         p = stock_one.oneday(realcode, starttime, endtime)
         print(p)
+        all.append(p)
         
 except Exception as err:
     print(err)
@@ -58,16 +65,25 @@ except Exception as err:
 cursor.close()
 db.close()
 
+all = np.array(all)
+v1 = np.sort(all[:,6])
+v2 = np.sort(all[:,7])
+
+x = np.arange(all.shape[0])
+
+
 # out_list = np.array([list(item) for item in zip(x,y)])
 
 # print(out_list)
 # out_list = out_list[np.lexsort(out_list.T)]
 # print(out_list)
 
-# np.savez('all_data', out_list)
+np.savez('all_data', all)
 
-# plt.title("ALL") 
-# plt.xlabel("x") 
-# plt.ylabel("price") 
-# plt.plot(out_list[:,1]) 
-# plt.show()
+plt.title("ALL") 
+plt.xlabel("x") 
+plt.ylabel("price") 
+plt.ylim([-100,300])
+plt.plot(x,v1,linestyle='--',color='red') 
+plt.plot(x,v2,linestyle='--',color='green') 
+plt.show()
