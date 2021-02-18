@@ -90,9 +90,11 @@ print('login respond  error_msg:'+lg.error_msg)
 
 for i in range(data.shape[0]):
     try:
+        if int(data.values[i,:][1]) < 600037:
+            continue
+
         realcode = data.values[i,:][0][7]+data.values[i,:][0][8]+'.'+data.values[i,:][1]
         print(i, realcode)
-
         rs = bs.query_history_k_data_plus(realcode,
             "date,code,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST",
             start_date=starttime, end_date=endtime,
@@ -175,8 +177,8 @@ for i in range(data.shape[0]):
 #        db.close()
 
 
-        if i > 1:
-            break
+        #if i > 1:
+        #    break
 
 #        data_15min = ts.pro_bar(ts_code=realcode, adj='qfq', start_date=starttime, end_date=endtime, freq='15min')
 #        [rows15, cols15] = data_15min.shape
